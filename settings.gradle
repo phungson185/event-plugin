@@ -5,4 +5,5 @@ include 'plugins'
 
 include 'plugins:kafkaplugin'
 include 'plugins:mongodbplugin'
+include 'plugins:mqttplugin'
 
