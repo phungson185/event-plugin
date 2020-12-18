@@ -58,7 +58,6 @@ public class MqttEventListener implements IPluginEventListener {
         {
 			e.printStackTrace();
         }
-        System.out.println("Connected");
     }
 
     @Override
