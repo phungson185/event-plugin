@@ -11,6 +11,7 @@ import org.eclipse.paho.client.mqttv3.MqttClient;
 import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
 import org.eclipse.paho.client.mqttv3.MqttException;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
+import org.eclipse.paho.client.mqttv3.MqttPersistenceException;
 import org.eclipse.paho.client.mqttv3.persist.MemoryPersistence;
 
 @Extension
@@ -51,62 +52,97 @@ public class MqttEventListener implements IPluginEventListener {
     		mqttClient = new MqttClient(broker, clientId, persistence);
     		MqttConnectOptions connOpts = new MqttConnectOptions();
     		connOpts.setCleanSession(true);
-    		System.out.println("Connecting to broker: "+broker);
     		mqttClient.connect(connOpts);
         }
-        catch(Exception ex)
-        {}
+        catch(MqttException e)
+        {
+			e.printStackTrace();
+        }
         System.out.println("Connected");
     }
 
     @Override
     public void handleBlockEvent(Object data) {
+    	if (Objects.isNull(data)){
+            return;
+        }
     	try {
-		String Data = (String)data;
-		Data = Data.replace("{", "").replace("}", "");
-		String[] pairs = Data.split(",");
-		for (int i=0;i<pairs.length;i++) {
-		    if(pairs[i].contains(Constant.TIME_STAMP) == true || pairs[i].contains(Constant.TRIGGER_NAME) || pairs[i].contains("latestSolidifiedBlockNumber"))
-		    	solidityTrigger = solidityTrigger + pairs[i] + " ; ";
-		    if(pairs[i].contains(Constant.BLOCK_NUMBER) || pairs[i].contains(Constant.BLOCK_HASH))
-		    	block = block + pairs[i]+ " ; " ;
-		    if(pairs[i].contains(Constant.TRANSACTION_SIZE) || pairs[i].contains(Constant.TRANSACTION_LIST))
-		    	transaction = transaction + pairs[i]+ " ; ";
+			Function.publish(data, qos, Constant.BLOCK_TRIGGER_NAME, mqttClient);
+		} catch (MqttException e) {
+			e.printStackTrace();
 		}
-	    Function.publish(Constant.BLOCK_TRIGGER_NAME, block, qos, mqttClient);
-        Function.publish(Constant.TRANSACTION_TRIGGER_NAME, transaction, qos, mqttClient);
-        Function.publish(Constant.SOLIDITY_TRIGGER_NAME, solidityTrigger, qos, mqttClient);
-        block = "";
-    	solidityTrigger = "";
-    	transaction = "";
-    	}
-        catch(Exception ex)
-    	{}
-        System.out.println("Message published");
     }
 
     @Override
     public void handleTransactionTrigger(Object data) {
+    	if (Objects.isNull(data)){
+            return;
+        }
+    	try {
+			Function.publish(data, qos, Constant.TRANSACTION_TRIGGER_NAME, mqttClient);
+		} catch (MqttException e) {
+			e.printStackTrace();
+		}
     }
 
     @Override
     public void handleSolidityTrigger(Object data) {
+    	if (Objects.isNull(data)){
+            return;
+        }
+    	try {
+			Function.publish(data, qos, Constant.SOLIDITY_TRIGGER_NAME, mqttClient);
+		} catch (MqttException e) {
+			e.printStackTrace();
+		}
     }
 
     @Override
     public void handleSolidityLogTrigger(Object data) {
+    	if (Objects.isNull(data)){
+            return;
+        }
+    	try {
+			Function.publish(data, qos, Constant.SOLIDITYLOG_TRIGGER_NAME, mqttClient);
+		} catch (MqttException e) {
+			e.printStackTrace();
+		}
     }
 
     @Override
     public void handleSolidityEventTrigger(Object data) {
+    	if (Objects.isNull(data)){
+            return;
+        }
+    	try {
+			Function.publish(data, qos, Constant.SOLIDITYEVENT_TRIGGER_NAME, mqttClient);
+		} catch (MqttException e) {
+			e.printStackTrace();
+		}
     }
 
     @Override
     public void handleContractLogTrigger(Object data) {
+    	if (Objects.isNull(data)){
+            return;
+        }
+    	try {
+			Function.publish(data, qos, Constant.CONTRACTLOG_TRIGGER_NAME, mqttClient);
+		} catch (MqttException e) {
+			e.printStackTrace();
+		}
     }
 
     @Override
     public void handleContractEventTrigger(Object data) {
+    	if (Objects.isNull(data)){
+            return;
+        }
+    	try {
+			Function.publish(data, qos, Constant.CONTRACTEVENT_TRIGGER_NAME, mqttClient);
+		} catch (MqttException e) {
+			e.printStackTrace();
+		}
     }
 
 }
